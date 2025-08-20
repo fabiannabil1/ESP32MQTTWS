@@ -1,12 +1,9 @@
----
-
 # ESP32MQTTWS
 
 **ESP32MQTTWS** is a lightweight MQTT over WebSockets library for ESP32, designed to connect to MQTT brokers that are tunneled through **Cloudflare (free tier)** or similar WebSocket-only endpoints.
 
 Unlike traditional MQTT libraries that connect via raw TCP (1883) or TLS (8883), this library implements **native WebSocket framing** and **MQTT protocol packets** directly, allowing ESP32 to communicate with brokers exposed only through `wss://` endpoints.
 
----
 
 ## ✨ Features
 
@@ -16,7 +13,6 @@ Unlike traditional MQTT libraries that connect via raw TCP (1883) or TLS (8883),
 * Auto-reconnect with re-subscription.
 * Custom **onMessage() callback** for receiving MQTT messages.
 
----
 
 ## 🚀 Usage
 
@@ -53,7 +49,6 @@ if (mqtt.connectBroker("your-broker.com", 443, "/mqtt")) {
 * **Port** → usually `443` for secure WebSockets.
 * **WS Path** → e.g., `/mqtt` or `/ws`.
 
----
 
 ### 4. Subscribe to a topic
 
@@ -61,15 +56,12 @@ if (mqtt.connectBroker("your-broker.com", 443, "/mqtt")) {
 mqtt.mqttSubscribe("test/topic");
 ```
 
----
 
 ### 5. Publish a message
 
 ```cpp
 mqtt.mqttPublish("test/topic", "Hello from ESP32 over WebSockets!");
 ```
-
----
 
 ### 6. Handle incoming messages
 
@@ -79,7 +71,6 @@ mqtt.onMessage([](String topic, String msg) {
 });
 ```
 
----
 
 ### 7. Loop
 
@@ -89,7 +80,6 @@ void loop() {
 }
 ```
 
----
 
 ## 📌 Example Full Code
 
@@ -121,12 +111,8 @@ void loop() {
 }
 ```
 
----
-
 ## ⚠️ Notes
 
 * Cloudflare free tier only supports WebSocket tunneling, not raw MQTT → this library solves that.
 * Recommended to use **secure port 443 (WSS)** instead of `80 (WS)`.
 * Still experimental → some MQTT features like QoS1/2 are not fully implemented.
-
----
