@@ -44,9 +44,39 @@ size_t ESP32MQTTWS::encodeRemainingLength(uint8_t* buf, size_t len) {
   return i;
 }
 
+String generateWebSocketKey() {
+  uint8_t rawKey[16];
+  for (int i = 0; i < 16; i++) {
+    rawKey[i] = (uint8_t)esp_random();  // generate random byte
+  }
+
+  // encode base64 manual (tanpa library)
+  const char base64_chars[] =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      "abcdefghijklmnopqrstuvwxyz"
+      "0123456789+/";
+
+  String base64 = "";
+  int i = 0;
+  while (i < 16) {
+    uint32_t octet_a = i < 16 ? rawKey[i++] : 0;
+    uint32_t octet_b = i < 16 ? rawKey[i++] : 0;
+    uint32_t octet_c = i < 16 ? rawKey[i++] : 0;
+
+    uint32_t triple = (octet_a << 16) + (octet_b << 8) + octet_c;
+
+    base64 += base64_chars[(triple >> 18) & 0x3F];
+    base64 += base64_chars[(triple >> 12) & 0x3F];
+    base64 += (i - 1 < 16) ? base64_chars[(triple >> 6) & 0x3F] : '=';
+    base64 += (i < 16)     ? base64_chars[(triple) & 0x3F]       : '=';
+  }
+
+  return base64;
+}
+
+
 bool ESP32MQTTWS::websocketHandshake() {
-  // simple static key (ok) — could be improved to random base64 key
-  String key = "x3JJHMbDL1EzLkh9GBhXDw=="; // acceptable but can be randomized
+  String key = generateWebSocketKey();
 
   client.print(String("GET ") + wsPath + " HTTP/1.1\r\n" +
                "Host: " + brokerHost + "\r\n" +
